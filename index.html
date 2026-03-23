@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tilt · Creative Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808;--surface:#0f0f0f;--surface2:#161616;--surface3:#1c1c1c;
+  --border:#1e1e1e;--border2:#2a2a2a;--white:#F7F7F8;--muted:#444;--muted2:#777;
+  --violet:#9840FF;--vdim:rgba(152,64,255,0.12);
+  --y2k:#FF3CAC;--street:#00E5FF;--vintage:#C9A96E;--sneakers:#FF6B35;
+  --luxury:#E8D5B0;--beauty:#FF8FAB;--trading:#7CFC00;--general:#9840FF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+
+/* HEADER */
+header{padding:32px 44px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.logo-eye{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.logo-h{font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.logo-h em{color:var(--violet);font-style:normal}
+.api-row{display:flex;align-items:center;gap:9px}
+.api-row label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.15em}
+.api-wrap{position:relative}
+.api-wrap input{background:var(--surface);border:1px solid var(--border2);color:var(--white);font-family:'Space Mono',monospace;font-size:11px;padding:8px 30px 8px 11px;border-radius:6px;width:230px;outline:none;transition:border-color .2s}
+.api-wrap input:focus{border-color:var(--violet)}
+.api-wrap input::placeholder{color:var(--muted)}
+.tv{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:0}
+.kdot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s}
+.kdot.ok{background:#4ade80}
+
+/* MODE BAR */
+.mode-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.mb{flex:1;padding:13px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted2);font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.mb:hover{color:var(--white);background:var(--surface)}
+.mb.active{color:var(--white);border-bottom-color:var(--violet);background:var(--surface)}
+.mbadge{padding:2px 6px;border-radius:10px;font-size:7px;background:var(--surface3);color:var(--muted2)}
+.mb.active .mbadge{background:var(--vdim);color:var(--violet)}
+
+/* LAYOUT */
+.ws{display:grid;grid-template-columns:252px 1fr;min-height:calc(100vh - 120px)}
+
+/* SIDEBAR */
+aside{border-right:1px solid var(--border);padding:24px 18px 40px;position:sticky;top:43px;height:calc(100vh - 43px);overflow-y:auto;display:flex;flex-direction:column;gap:22px}
+.sbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.cb{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:8px 8px 6px;background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s}
+.cb:hover{background:var(--surface2)}
+.cb.active{background:var(--surface2)}
+.cd{width:5px;height:5px;border-radius:50%}
+.cl{font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);transition:color .15s}
+.cb.active .cl{color:var(--white)}
+.cb[data-c=y2k] .cd{background:var(--y2k)}.cb[data-c=y2k].active{border-color:var(--y2k)}
+.cb[data-c=street] .cd{background:var(--street)}.cb[data-c=street].active{border-color:var(--street)}
+.cb[data-c=vintage] .cd{background:var(--vintage)}.cb[data-c=vintage].active{border-color:var(--vintage)}
+.cb[data-c=sneakers] .cd{background:var(--sneakers)}.cb[data-c=sneakers].active{border-color:var(--sneakers)}
+.cb[data-c=luxury] .cd{background:var(--luxury)}.cb[data-c=luxury].active{border-color:var(--luxury)}
+.cb[data-c=beauty] .cd{background:var(--beauty)}.cb[data-c=beauty].active{border-color:var(--beauty)}
+.cb[data-c=trading] .cd{background:var(--trading)}.cb[data-c=trading].active{border-color:var(--trading)}
+.cb[data-c=general] .cd{background:var(--general)}.cb[data-c=general].active{border-color:var(--general)}
+
+.opts{display:flex;flex-direction:column;gap:4px}
+.ob{display:flex;align-items:center;gap:9px;padding:7px 9px;background:none;border:1px solid transparent;border-radius:5px;cursor:pointer;transition:all .15s;text-align:left;width:100%}
+.ob:hover{background:var(--surface)}
+.ob.active{background:var(--surface2);border-color:var(--border2)}
+.oi{font-size:12px;width:18px;text-align:center;flex-shrink:0}
+.ol{font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);transition:color .15s;line-height:1.4}
+.ob.active .ol{color:var(--white)}
+
+.tw{display:flex;flex-wrap:wrap;gap:4px}
+.tb{padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);cursor:pointer;transition:all .15s}
+.tb:hover{color:var(--white);border-color:var(--border2)}
+.tb.active{background:var(--vdim);border-color:var(--violet);color:var(--violet)}
+
+.cnt-row{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;width:fit-content}
+.cn{width:28px;height:28px;background:none;border:none;color:var(--muted2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cn:hover{color:var(--white);background:var(--surface2)}
+.cv{width:30px;text-align:center;font-family:'Space Mono',monospace;font-size:12px;color:var(--white);border-left:1px solid var(--border);border-right:1px solid var(--border)}
+
+.gbtn{width:100%;padding:12px;background:var(--violet);border:none;border-radius:7px;color:var(--white);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.gbtn:hover{background:#a855f7;transform:translateY(-1px)}
+.gbtn:active{transform:translateY(0)}
+.gbtn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.sp{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.gbtn.loading .sp{display:block}
+.gbtn.loading .bt{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MAIN */
+main{padding:32px 40px 60px;display:flex;flex-direction:column;gap:24px}
+.ctx-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.cc{display:flex;align-items:center;gap:4px;padding:3px 9px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-family:'Space Mono',monospace;font-size:8px;color:var(--muted2)}
+.ccd{width:4px;height:4px;border-radius:50%}
+
+.pb{display:flex;flex-direction:column;gap:5px}
+.pl{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.pi{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:11px 13px;color:var(--white);font-family:'Syne',sans-serif;font-size:13px;resize:vertical;min-height:68px;outline:none;transition:border-color .2s;width:100%;line-height:1.5}
+.pi:focus{border-color:var(--violet)}
+.pi::placeholder{color:var(--muted)}
+
+.ebar{display:none;padding:9px 13px;background:rgba(255,60,60,.08);border:1px solid rgba(255,60,60,.2);border-radius:6px;font-family:'Space Mono',monospace;font-size:9px;color:#ff7070}
+.ebar.show{display:block}
+
+.rh{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px}
+.rl{font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted)}
+.ra{display:flex;gap:5px}
+.ab{padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted2);font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:all .15s}
+.ab:hover{color:var(--white);border-color:var(--border2)}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 40px;text-align:center;gap:12px;border:1px dashed var(--border);border-radius:10px}
+.ei{font-size:28px;opacity:.2}
+.et{font-size:13px;font-weight:700;color:var(--muted2)}
+.es{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);max-width:280px;line-height:1.7}
+
+.stack{display:flex;flex-direction:column;gap:11px}
+
+/* HOOK CARD */
+.hcard{background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;animation:fu .3s ease forwards;opacity:0;transform:translateY(5px)}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.hct{padding:15px 17px 11px;display:flex;align-items:flex-start;gap:11px}
+.hnum{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;flex-shrink:0}
+.hbody{flex:1}
+.htag{display:inline-block;font-family:'Space Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.12em;padding:2px 6px;border-radius:3px;margin-bottom:6px}
+.hhook{font-size:15px;font-weight:700;line-height:1.35;color:var(--white);margin-bottom:5px}
+.hwhy{font-size:11px;color:var(--muted2);line-height:1.6}
+.hsrc{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-style:italic}
+.hsrc span{color:var(--violet)}
+.hacts{padding:7px 17px 11px;display:flex;gap:5px;border-top:1px solid var(--border);flex-wrap:wrap}
+.mb2{padding:3px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--muted2);font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;transition:all .15s}
+.mb2:hover{color:var(--white);border-color:var(--border2)}
+.mb2.ok{color:#4ade80;border-color:#4ade80}
+.exp{display:none;padding:13px 17px 15px;background:#090909;border-top:1px solid var(--border)}
+.exp.open{display:block}
+.exl{font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:7px}
+.exb{font-size:11px;color:#ccc;line-height:1.8;white-space:pre-wrap}
+
+/* BRIEF CARD */
+.bcard{background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;animation:fu .3s ease forwards;opacity:0;transform:translateY(5px)}
+.bhr{padding:16px 18px 12px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;border-bottom:1px solid transparent;transition:background .15s}
+.bhr:hover{background:#111}
+.bhr.open{border-bottom-color:var(--border)}
+.bnum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;flex-shrink:0}
+.bht{flex:1}
+.btt{font-size:13px;font-weight:700}
+.bsub{font-size:10px;color:var(--muted2);margin-top:2px}
+.bpills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:2px 7px;border:1px solid var(--border);border-radius:4px;font-family:'Space Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted2)}
+.bchev{font-size:15px;color:var(--muted2);transition:transform .2s;flex-shrink:0;margin-top:2px}
+.bhr.open .bchev{transform:rotate(90deg)}
+
+.bbp{display:none;padding:18px 18px 20px}
+.bbp.open{display:block}
+.bg2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+@media(max-width:680px){.bg2{grid-template-columns:1fr}}
+.bsl{font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:5px}
+.bsb{font-size:11px;line-height:1.7;color:#ccc}
+.bsb ul{padding-left:13px}
+.bsb li{margin-bottom:3px}
+.bsb strong{color:var(--white)}
+
+.srcbox{background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:11px 13px;margin-top:4px}
+.srcl{font-family:'Space Mono',monospace;font-size:7px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:5px}
+.srcr{font-size:10px;color:var(--muted2);line-height:1.7}
+.srcr span{color:var(--violet);font-family:'Space Mono',monospace;font-size:9px}
+
+.scr{background:#090909;border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-top:14px}
+.scrline{font-size:11px;line-height:1.9;color:#ccc;margin-bottom:3px}
+.scrline .tc{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);display:inline-block;min-width:66px;margin-right:5px}
+.scrline .hook-w{color:var(--white);font-weight:700}
+
+.bf{padding:8px 18px 12px;border-top:1px solid var(--border);display:flex;gap:5px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:9px 15px;font-family:'Space Mono',monospace;font-size:9px;color:var(--white);z-index:9998;opacity:0;transform:translateY(5px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  .ws{grid-template-columns:1fr}
+  aside{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border)}
+  header,main{padding-left:18px;padding-right:18px}
+  .mb{font-size:7px;padding:11px 8px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <p class="logo-eye">Tilt · Internal Creative Tools</p>
+    <h1 class="logo-h">Creative <em>Generator</em></h1>
+  </div>
+  <div class="api-row">
+    <label>API Key</label>
+    <div class="api-wrap">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off">
+      <button class="tv" onclick="toggleKey()">👁</button>
+    </div>
+    <div class="kdot" id="kdot"></div>
+  </div>
+</header>
+
+<div class="mode-bar">
+  <button class="mb active" data-mode="ugc-hooks" onclick="setMode(this)">🎯 UGC Hooks <span class="mbadge">TikTok / Reels</span></button>
+  <button class="mb" data-mode="ugc-briefs" onclick="setMode(this)">📋 UGC Briefs <span class="mbadge">Full brief</span></button>
+  <button class="mb" data-mode="paid-hooks" onclick="setMode(this)">💰 Paid Hooks <span class="mbadge">Meta / TikTok Ads</span></button>
+  <button class="mb" data-mode="paid-briefs" onclick="setMode(this)">📐 Paid Briefs <span class="mbadge">Full ad brief</span></button>
+</div>
+
+<div class="ws">
+  <aside>
+    <div>
+      <p class="sbl">Category</p>
+      <div class="cat-grid">
+        <button class="cb active" data-c="sneakers" onclick="setCat(this)"><span class="cd"></span><span class="cl">Sneakers</span></button>
+        <button class="cb" data-c="luxury" onclick="setCat(this)"><span class="cd"></span><span class="cl">Luxury</span></button>
+        <button class="cb" data-c="street" onclick="setCat(this)"><span class="cd"></span><span class="cl">Streetwear</span></button>
+        <button class="cb" data-c="y2k" onclick="setCat(this)"><span class="cd"></span><span class="cl">Y2K</span></button>
+        <button class="cb" data-c="vintage" onclick="setCat(this)"><span class="cd"></span><span class="cl">Vintage</span></button>
+        <button class="cb" data-c="trading" onclick="setCat(this)"><span class="cd"></span><span class="cl">Trading Cards</span></button>
+        <button class="cb" data-c="beauty" onclick="setCat(this)"><span class="cd"></span><span class="cl">Beauty</span></button>
+        <button class="cb" data-c="general" onclick="setCat(this)"><span class="cd"></span><span class="cl">General</span></button>
+      </div>
+    </div>
+    <div id="dynOpts"></div>
+    <div>
+      <p class="sbl" id="cntLbl">How many hooks</p>
+      <div class="cnt-row">
+        <button class="cn" onclick="chgCnt(-1)">−</button>
+        <span class="cv" id="cv">5</span>
+        <button class="cn" onclick="chgCnt(1)">+</button>
+      </div>
+    </div>
+    <button class="gbtn" id="gbtn" onclick="generate()">
+      <div class="sp"></div><span class="bt">Generate</span>
+    </button>
+  </aside>
+
+  <main>
+    <div class="ctx-bar" id="ctxBar">
+      <span class="cc"><span class="ccd" id="ccd" style="background:var(--sneakers)"></span><span id="ccat">Sneakers</span></span>
+      <span class="cc" id="cmode">UGC Hooks</span>
+      <span class="cc" id="co1">Any format</span>
+      <span class="cc" id="co2">Any tone</span>
+    </div>
+    <div class="pb">
+      <p class="pl" id="plbl">Additional context (optional)</p>
+      <textarea class="pi" id="ctx" placeholder="e.g. Air Max Day 26 March — lean into that timing. Or: creator is 22yr old male reseller in Manchester. Or: flash sale this weekend only."></textarea>
+    </div>
+    <div class="ebar" id="ebar"></div>
+    <div class="rh">
+      <p class="rl" id="rl">Results will appear here</p>
+      <div class="ra" id="ra" style="display:none">
+        <button class="ab" onclick="copyAll()">Copy all</button>
+        <button class="ab" onclick="clearR()">Clear</button>
+      </div>
+    </div>
+    <div id="rarea">
+      <div class="empty" id="emp">
+        <div class="ei">✦</div>
+        <p class="et">Nothing generated yet</p>
+        <p class="es">Pick a category and mode, add context if needed, then generate.</p>
+      </div>
+      <div class="stack" id="stk" style="display:none"></div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let mode='ugc-hooks', cat='sneakers', count=5;
+let ugcFmt='any', ugcTone='any', paidFmt='any', paidObj='install';
+
+const CCOLS={sneakers:'#FF6B35',luxury:'#E8D5B0',street:'#00E5FF',y2k:'#FF3CAC',vintage:'#C9A96E',trading:'#7CFC00',beauty:'#FF8FAB',general:'#9840FF'};
+const CLBLS={sneakers:'Sneakers',luxury:'Luxury Menswear',street:'Streetwear',y2k:'Y2K',vintage:'Vintage',trading:'Trading Cards',beauty:'Beauty',general:'General'};
+const MLBLS={'ugc-hooks':'UGC Hooks','ugc-briefs':'UGC Briefs','paid-hooks':'Paid Hooks','paid-briefs':'Paid Briefs'};
+
+// ── API KEY ──
+document.getElementById('apiKey').addEventListener('input',function(){
+  const v=this.value.trim();
+  document.getElementById('kdot').className='kdot'+(v.startsWith('sk-ant-')&&v.length>20?' ok':'');
+  if(v)localStorage.setItem('tilt_k',v);
+});
+window.addEventListener('DOMContentLoaded',()=>{
+  const s=localStorage.getItem('tilt_k');
+  if(s){document.getElementById('apiKey').value=s;document.getElementById('kdot').className='kdot ok';}
+  renderOpts(); updateCtx();
+  document.getElementById('ctx').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();generate();}});
+});
+function toggleKey(){const i=document.getElementById('apiKey');i.type=i.type==='password'?'text':'password';}
+
+// ── MODE / CAT ──
+function setMode(btn){
+  document.querySelectorAll('.mb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); mode=btn.dataset.mode;
+  renderOpts(); updateCtx(); clearR();
+  document.getElementById('cntLbl').textContent=mode.includes('briefs')?'How many briefs':'How many hooks';
+}
+function setCat(btn){
+  document.querySelectorAll('.cb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); cat=btn.dataset.c; updateCtx();
+}
+function chgCnt(d){
+  count=Math.max(1,Math.min(mode.includes('briefs')?5:10,count+d));
+  document.getElementById('cv').textContent=count;
+}
+
+// ── DYNAMIC OPTIONS ──
+function renderOpts(){
+  const el=document.getElementById('dynOpts');
+  if(mode==='ugc-hooks'||mode==='ugc-briefs'){
+    el.innerHTML=`
+<div>
+<p class="sbl">Video format</p>
+<div class="opts" id="fmtP">
+${[['any','✦','Any format'],['talking-head','🎙','Talking Head'],['fit-check','👕','Fit Check'],['pov','📱','POV'],['grwm','💄','GRWM'],['haul','🛍','Haul'],['screen-record','📲','Screen Record']].map(([v,i,l])=>`<button class="ob${v==='any'?' active':''}" data-v="${v}" onclick="setUF(this)"><span class="oi">${i}</span><span class="ol">${l}</span></button>`).join('')}
+</div></div>
+<div>
+<p class="sbl">Hook tone</p>
+<div class="tw" id="toneP">
+${[['any','Any'],['curiosity','Curiosity'],['hot-take','Hot Take'],['pov','POV'],['problem-solution','Problem/Solution'],['insider','Insider'],['numbers','Numbers First'],['reveal','Reveal'],['tutorial','Tutorial / Edu']].map(([v,l])=>`<button class="tb${v==='any'?' active':''}" data-v="${v}" onclick="setUT(this)">${l}</button>`).join('')}
+</div></div>`;
+  } else {
+    el.innerHTML=`
+<div>
+<p class="sbl">Creative format</p>
+<div class="opts" id="fmtP">
+${[['any','✦','Any format'],['live-auction','🔴','Live Auction Close'],['anticipation','👀','Anticipation / Slow Reveal'],['pull-reveal','📦','Pull / Chase Reveal'],['high-demand','💬','High Demand Comments'],['retail-vs','⚡','Retail vs Tilt'],['guess-price','🎯','Guess the Price'],['no-talking','🔇','No Talking / ASMR'],['comment-ad','↩','Comment Ad']].map(([v,i,l])=>`<button class="ob${v==='any'?' active':''}" data-v="${v}" onclick="setPF(this)"><span class="oi">${i}</span><span class="ol">${l}</span></button>`).join('')}
+</div></div>
+<div>
+<p class="sbl">Campaign objective</p>
+<div class="opts" id="objP">
+${[['install','📲','App Install — cold'],['retarget','🔄','Retargeting — warm'],['seller','🏪','Seller Acquisition']].map(([v,i,l])=>`<button class="ob${v==='install'?' active':''}" data-v="${v}" onclick="setPO(this)"><span class="oi">${i}</span><span class="ol">${l}</span></button>`).join('')}
+</div></div>`;
+  }
+}
+function setUF(b){document.querySelectorAll('#fmtP .ob').forEach(x=>x.classList.remove('active'));b.classList.add('active');ugcFmt=b.dataset.v;updateCtx();}
+function setUT(b){document.querySelectorAll('#toneP .tb').forEach(x=>x.classList.remove('active'));b.classList.add('active');ugcTone=b.dataset.v;updateCtx();}
+function setPF(b){document.querySelectorAll('#fmtP .ob').forEach(x=>x.classList.remove('active'));b.classList.add('active');paidFmt=b.dataset.v;updateCtx();}
+function setPO(b){document.querySelectorAll('#objP .ob').forEach(x=>x.classList.remove('active'));b.classList.add('active');paidObj=b.dataset.v;updateCtx();}
+function updateCtx(){
+  document.getElementById('ccd').style.background=CCOLS[cat];
+  document.getElementById('ccat').textContent=CLBLS[cat];
+  document.getElementById('cmode').textContent=MLBLS[mode];
+  if(mode.includes('ugc')){document.getElementById('co1').textContent=ugcFmt==='any'?'Any format':ugcFmt;document.getElementById('co2').textContent=ugcTone==='any'?'Any tone':ugcTone;}
+  else{document.getElementById('co1').textContent=paidFmt==='any'?'Any format':paidFmt;document.getElementById('co2').textContent=paidObj;}
+}
+
+// ── PROMPTS ──
+const PERSONAS={
+  sneakers:`Personas: Bargain Hunters (deal-first, 25-55, want price proof and £1NR framing), New Resellers (side-hustle mindset, 16-28, hustle culture, resale margin), Experienced Resellers (full-time, 22-40, efficiency-first, sourcing before market). Key brands: Nike, Adidas, Jordan, ASICS. Key products: Air Max 95, Jordan 4, Travis Scott collabs, Air Max 270, P-6000. Competitors: StockX, GOAT, Nike SNKRS, Klekt.`,
+  luxury:`Personas: Bargain Hunters (clearance prices on luxury), New Resellers (flip potential), Experienced Resellers (bulk sourcing, archive pieces). Focus: designer outerwear, bombers, parkas. Key brands: Stone Island, CP Company, Moncler, Prada, Off-White, Burberry, Canada Goose. Competitors: Vestiaire, Farfetch, Grailed, StockX.`,
+  street:`Personas: New Resellers + Experienced Resellers. Male-skewed, 18-35. Into Kangol, 90s layering, gorpcore, downtown fits. Motivated by flipping for profit and finding pieces before StockX. Competitors: Depop, StockX, Grailed.`,
+  y2k:`Personas: Bargain Hunters + fashion-forward shoppers. Female-skewed, 18-30. Bratz aesthetic, low-rise denim, butterfly clips, rhinestone details. Anti-SHEIN quality. Competitors: Depop, Vinted, SHEIN Y2K dupes.`,
+  vintage:`Personas: Archive Lovers (provenance, condition, original labels are everything — "1994 Levi's 501, original tab, no fading" outperforms generic copy 6x) and Vintage Resellers (margin-focused, Depop pricing arbitrage, speed of sourcing). Mixed gender, 18-40. Competitors: Vinted, Depop, eBay vintage.`,
+  trading:`Personas: Pack Rippers (thrill of the pull, collector mindset, grew up with Pokémon) and Card Investors (PSA grades, ROI, market arbitrage). Key formats: Pokémon, Sports Cards (basketball, football), Magic: The Gathering, One Piece, Yu-Gi-Oh. Live pack ripping is the unique Tilt USP — the pull happens on camera. Competitors: eBay, TCGplayer, Card Market, local card shops.`,
+  beauty:`Personas: Beauty Enthusiasts (buys to use, loves live demo format — see it in action before bidding) and Beauty Flippers (discontinued/limited edition, sealed condition, resale margin). Female-skewed, 18-40. Key: Dior Backstage, Sol de Janeiro, discontinued MAC shades, rare palettes, fragrance flankers. Competitors: TikTok Shop beauty, Lookfantastic, Cult Beauty.`,
+  general:`General Tilt audience. All personas active. Tilt is a live shopping platform — sellers auction items in real time via live stream. USP: live = transparent condition, thrilling, you find things before they hit any static marketplace.`,
+};
+
+const BRAND=`TILT BRAND VOICE — NON-NEGOTIABLE:
+- Never em dashes. Use commas, colons, or new sentences instead.
+- Always contractions: you're, it's, we've — never the formal versions.
+- UK English always. £ not $. colour, whilst, etc.
+- No "amazing", "incredible", "grab" (use "get"). No "vibe". No "curation" outside womenswear.
+- No emoji in hook lines themselves. Dry wit only — never forced or cringeworthy.
+- Sound like a smart friend who found the deal. Never a brand account. Never corporate.
+- Tilt's core USP: buyers watch sellers auction items LIVE in real time. You see condition, labels, quality live — this beats static Depop/Vinted/StockX listings every time.
+- Never write "TILT" in all caps. Always "Tilt".
+- No "please wait", "successfully", "initiated", "click here", "grab".`;
+
+const PAID_LEARNINGS=`TILT PAID AD PERFORMANCE DATA — USE THIS TO INFORM EVERYTHING:
+Top performers (real Tilt ads, Jan-Mar 2026):
+- KingsKleans Jordan 4 live auction: 375 purchases, £35.63 CPA. Opened with Tilt live UI in frame 1, bids moving, "£1 SUDDEN DEATH" neon text. Highest purchase CVR in the library.
+- Air Max 95 Pre-loved auction: same format, "PRE-LOVED" overlay, bids escalating £37 to £41.
+- TCG Anticipation V1: 35% hook rate, 2.0% CTR. Card held face-down for 5+ seconds, slow turn-over reveal, "Charizard EX / Special Illustration Rare (SIR)" overlay at reveal moment.
+- TCG Pull a Chase Card V1: 30% hook rate, 2.6% CTR. Multiple common pulls first, live chat building ("something big is coming"), Mega Charizard X reveal, creator unscripted reaction.
+- Janine - Air Max Terrascapes: 31% hook, 4.7% CTR.
+- Heat from Spire Stone Island - High Demand Comments V1: 32% hook, 1.46% CTR.
+- KV - Guess the Price (Vintage): 26% hook, 0.76% CTR.
+
+6 proven patterns:
+1. Product in frame 1 — no exceptions. Talking-head openers = below 20% hook rate consistently.
+2. Live auction UI converts. Bids moving, £1 start, timer. Makes Tilt's mechanic visual not verbal.
+3. Anticipation beats explanation. Face-down card. Hidden label. Unknown price. Viewer can't leave.
+4. Real chat reactions ("CHAT THAT'S INSANE", "Pack of the year") beat any scripted testimonial.
+5. Unscripted creator reaction is the close. Let it breathe. Don't cut away.
+6. Text overlays must name product + price immediately. "Jordan 4 / Bid £1". "SUPREME. BOX LOGO. 2015. STARTING AT £1."
+
+What fails: talking-head openers, generic enthusiasm, high reach without price tension.
+
+Proven creative formats (cite these as sources where relevant):
+- Live Auction Close: highest purchase CVR
+- Anticipation/Slow Reveal: hook rate ceiling ~35%
+- Pull/Chase Reveal: strong for TCG, beauty unboxing
+- High Demand Comments: works across Footwear, Stone Island, Vintage
+- Retail vs Tilt: consistent (hook 17-24%, CTR 0.54-1.35%)
+- Guess the Price: Vintage hook 26%, CTR 0.76%
+- No Talking/ASMR: untested but high potential for vintage, luxury
+- Comment Ad: creator responds to disbelief comment with live proof`;
+
+function buildSys(){
+  const isPaid=mode.includes('paid');
+  return `You are a creative strategist for Tilt — a UK live shopping platform. You generate ${isPaid?'paid ad':'UGC'} creative assets.\n\n${BRAND}\n\n${isPaid?PAID_LEARNINGS+'\n\n':''}RETURN ONLY VALID JSON. No markdown fences, no preamble, no explanation.`;
+}
+
+function buildPrompt(){
+  const custom=document.getElementById('ctx').value.trim();
+  const isPaid=mode.includes('paid');
+  const isBrief=mode.includes('briefs');
+  const fmtStr=isPaid?(paidFmt==='any'?'your choice of format — vary them based on what works for this category':paidFmt):(ugcFmt==='any'?'your choice — vary formats':ugcFmt);
+  const objStr=isPaid?(paidObj==='install'?'App Install — cold audience, goal is downloads. Formula: [Remarkable hook] + [What Tilt is] + [One action]':paidObj==='retarget'?'Retargeting — warm audience who visited but did not install. Overcome hesitation, create urgency. Formula: [Social proof or FOMO] + [Low barrier]':'Seller Acquisition — attract potential sellers. Formula: [Outcome for sellers] + [How Tilt enables it]'):'';
+
+  let p=`Generate ${count} ${isPaid?'paid ad':'UGC'} ${isBrief?'full creative briefs':'hooks'} for Tilt — ${CLBLS[cat]} category.\n\nCATEGORY AND PERSONA CONTEXT:\n${PERSONAS[cat]}\n`;
+  if(isPaid){p+=`\nCAMPAIGN OBJECTIVE: ${objStr}\nCREATIVE FORMAT: ${fmtStr}`;}
+  else{p+=`\nVIDEO FORMAT: ${fmtStr}\nHOOK TONE: ${ugcTone==='any'?'vary tones — make each one feel different':ugcTone}`;}
+  if(custom)p+=`\n\nADDITIONAL CONTEXT FROM TEAM: ${custom}`;
+
+  if(!isBrief){
+    p+=`\n\nReturn JSON:
+{"items":[{"type":"hook type or tone label","hook":"The hook — first 0-3 seconds. UK English. No em dashes. No emoji in the hook line itself.","why":"1-2 sentences: why this works for this persona and format","source":"Specific source for this hook pattern — cite real Tilt ad performance data where relevant (e.g. 'Based on Tilt Jordan 4 live auction ad pattern, 375 purchases at £35.63 CPA'), or TikTok trend data, or named report. Be specific.","script":"3-5 timecoded beats. Format each as '0-3s: [direction] dialogue'. [Brackets] for camera/action instructions."}]}`;
+  } else {
+    p+=`\n\nReturn JSON:
+{"items":[{"title":"Brief title — 3-5 words, punchy","format":"e.g. Talking Head · 30 sec OR Live Auction Close · 20 sec","hook":"Opening hook line","persona":"Persona name + 1 sentence on why this brief targets them","objective":"What this piece needs to achieve — specific","setup":"Creator instructions: camera angle, setting, tone, what to wear/hold","overlays":["overlay 1","overlay 2","overlay 3"],"source":"Specific source — cite real Tilt ad data, named trend reports, TikTok format research. E.g. 'Retail vs Tilt format: consistent hook 17-24%, CTR 0.54-1.35% across Tilt footwear ads Jan 2026' or 'Problem/solution UGC format: highest-converting hook type per Pepper Agency TikTok Report Jan 2026'. Be specific and cite real data where possible.","trending_ref":"Specific TikTok trend, hashtag community, cultural moment, or format this taps into","script":"Full scripted skeleton — timecoded beats. Format: '0-3s: [direction] dialogue'. Clear [directions] for every beat.","note":"Important creator notes — authenticity requirements, what to avoid, price comparison rules, etc."}]}`;
+  }
+  return p;
+}
+
+// ── GENERATE ──
+async function generate(){
+  const key=document.getElementById('apiKey').value.trim();
+  if(!key||!key.startsWith('sk-ant-')){showE('Add your Anthropic API key top-right to get started.');return;}
+  const btn=document.getElementById('gbtn');
+  btn.classList.add('loading');btn.disabled=true;hideE();
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,system:buildSys(),messages:[{role:'user',content:buildPrompt()}]})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`API error ${res.status}`);}
+    const data=await res.json();
+    const raw=data.content?.[0]?.text||'';
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    if(!parsed.items?.length)throw new Error('No items in response');
+    mode.includes('hooks')?renderHooks(parsed.items):renderBriefs(parsed.items);
+  }catch(err){console.error(err);showE(err.message||'Something went wrong. Check your API key.');}
+  finally{btn.classList.remove('loading');btn.disabled=false;}
+}
+
+// ── RENDER HOOKS ──
+function renderHooks(items){
+  showR(`${items.length} hooks · ${CLBLS[cat]} · ${MLBLS[mode]}`);
+  const col=CCOLS[cat];
+  items.forEach((item,i)=>{
+    const c=document.createElement('div');c.className='hcard';c.style.animationDelay=`${i*50}ms`;
+    c.innerHTML=`<div class="hct"><div class="hnum" style="background:${col}1a;color:${col}">${String(i+1).padStart(2,'0')}</div><div class="hbody"><span class="htag" style="background:${col}18;color:${col}">${esc(item.type||'Hook')}</span><p class="hhook">${esc(item.hook)}</p><p class="hwhy">${esc(item.why)}</p><p class="hsrc">Source: <span>${esc(item.source||'—')}</span></p></div></div><div class="hacts"><button class="mb2" onclick="cptxt(this,${JSON.stringify(item.hook)})">Copy hook</button><button class="mb2" onclick="togExp(this)">Script ›</button></div><div class="exp"><p class="exl">Script skeleton</p><div class="exb">${esc(item.script||'')}</div></div>`;
+    document.getElementById('stk').appendChild(c);
+  });
+}
+
+// ── RENDER BRIEFS ──
+function renderBriefs(items){
+  showR(`${items.length} briefs · ${CLBLS[cat]} · ${MLBLS[mode]}`);
+  const col=CCOLS[cat];
+  items.forEach((item,i)=>{
+    const c=document.createElement('div');c.className='bcard';c.style.animationDelay=`${i*55}ms`;
+    c.innerHTML=`
+<div class="bhr" onclick="togBrief(this)">
+  <div class="bnum" style="background:${col}1a;color:${col}">${String(i+1).padStart(2,'0')}</div>
+  <div class="bht"><div class="btt">${esc(item.title)}</div><div class="bsub">${esc(item.format||'')}${item.persona?' · '+esc(item.persona.split('—')[0].trim()):''}</div></div>
+  <div class="bpills">${[item.format,mode.includes('paid')?paidObj:''].filter(Boolean).map(p=>`<span class="pill">${esc(p)}</span>`).join('')}</div>
+  <div class="bchev">›</div>
+</div>
+<div class="bbp">
+  <div class="bg2">
+    <div><p class="bsl">Hook</p><p class="bsb" style="font-weight:700;color:var(--white);font-size:13px">${esc(item.hook)}</p></div>
+    <div><p class="bsl">Objective</p><p class="bsb">${esc(item.objective||'')}</p></div>
+    <div><p class="bsl">Format &amp; Setup</p><p class="bsb">${esc(item.setup||'')}</p></div>
+    <div><p class="bsl">Persona</p><p class="bsb">${esc(item.persona||'')}</p></div>
+    <div><p class="bsl">Text Overlays</p><p class="bsb"><ul>${(item.overlays||[]).map(o=>`<li>${esc(o)}</li>`).join('')}</ul></p></div>
+    <div><p class="bsl">Trending Reference</p><p class="bsb">${esc(item.trending_ref||'')}</p></div>
+  </div>
+  <div class="srcbox"><p class="srcl">Where this format comes from</p><p class="srcr"><span>Source: </span>${esc(item.source||'—')}</p></div>
+  <div class="scr"><p class="bsl" style="margin-bottom:10px">Full script skeleton</p>${fmtScript(item.script||'')}</div>
+  ${item.note?`<p style="margin-top:12px;font-size:10px;color:var(--muted2)">⚠ ${esc(item.note)}</p>`:''}
+</div>
+<div class="bf">
+  <button class="mb2" onclick="cpBrief(this,${JSON.stringify(item).replace(/'/g,'&#39;')})">Copy brief</button>
+  <button class="mb2" onclick="cptxt(this,${JSON.stringify(item.hook)})">Copy hook only</button>
+</div>`;
+    document.getElementById('stk').appendChild(c);
+  });
+}
+
+function fmtScript(s){
+  if(!s)return'<p style="font-size:11px;color:var(--muted)">—</p>';
+  return s.split('\n').filter(l=>l.trim()).map(line=>{
+    const m=line.match(/^(\d[\d\-–]*s[:\s])/);
+    if(m){const lbl=m[1];const rest=line.slice(lbl.length).trim();return`<div class="scrline"><span class="tc">${esc(lbl)}</span><span class="${lbl.startsWith('0')?'hook-w':''}">${esc(rest)}</span></div>`;}
+    return`<div class="scrline">${esc(line)}</div>`;
+  }).join('');
+}
+
+function togExp(btn){const s=btn.closest('.hcard').querySelector('.exp');const o=s.classList.toggle('open');btn.textContent=o?'Script ∧':'Script ›';}
+function togBrief(hdr){const b=hdr.nextElementSibling;const o=hdr.classList.toggle('open');b.classList.toggle('open',o);}
+
+function showR(lbl){
+  document.getElementById('emp').style.display='none';
+  const s=document.getElementById('stk');s.style.display='flex';s.innerHTML='';
+  document.getElementById('rl').textContent=lbl;document.getElementById('ra').style.display='flex';
+}
+function clearR(){
+  document.getElementById('stk').style.display='none';document.getElementById('stk').innerHTML='';
+  document.getElementById('emp').style.display='flex';
+  document.getElementById('rl').textContent='Results will appear here';document.getElementById('ra').style.display='none';
+}
+
+function cptxt(btn,txt){navigator.clipboard.writeText(txt).then(()=>{const o=btn.textContent;btn.textContent='Copied ✓';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok');},2000);});}
+function cpBrief(btn,item){
+  const txt=`BRIEF: ${item.title}\nFormat: ${item.format}\nHook: ${item.hook}\nPersona: ${item.persona}\nObjective: ${item.objective}\nSetup: ${item.setup}\nOverlays: ${(item.overlays||[]).join(' | ')}\nSource: ${item.source}\nTrending ref: ${item.trending_ref}\nScript:\n${item.script}${item.note?'\nNote: '+item.note:''}`;
+  cptxt(btn,txt);
+}
+function copyAll(){
+  const hooks=document.querySelectorAll('.hhook');const briefs=document.querySelectorAll('.btt');
+  if(hooks.length){navigator.clipboard.writeText(Array.from(hooks).map((el,i)=>`${i+1}. ${el.textContent}`).join('\n\n')).then(()=>showT('All hooks copied'));}
+  else if(briefs.length){navigator.clipboard.writeText(Array.from(briefs).map((el,i)=>`${i+1}. ${el.textContent}`).join('\n')).then(()=>showT('Brief titles copied'));}
+}
+function showE(m){const e=document.getElementById('ebar');e.textContent=m;e.classList.add('show');}
+function hideE(){document.getElementById('ebar').classList.remove('show');}
+function showT(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
